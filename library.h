@@ -24,11 +24,11 @@ bst* bstInit(int value){
     bstNode* rootNode;
     bst* out;
 
-    rootNode = malloc(sizeof *rootNode);
+    rootNode = (bstNode*)malloc(sizeof *rootNode);
     rootNode->value = value;
     rootNode->ignore = false;
 
-    out = malloc(sizeof *rootNode);
+    out = (bst*)malloc(sizeof *out);
     out->root = rootNode;
     out->len = 1;
 
@@ -51,7 +51,7 @@ void bstSet(bst* t, int value){
                 continue;
             }
             bstNode* newNode;
-            newNode = malloc(sizeof *newNode);
+            newNode = (bstNode*)malloc(sizeof *newNode);
             newNode->value = value;
             pos->left = newNode;
             break;
@@ -61,7 +61,7 @@ void bstSet(bst* t, int value){
                 continue;
             }
             bstNode* newNode;
-            newNode = malloc(sizeof *newNode);
+            newNode = (bstNode*)malloc(sizeof *newNode);
             newNode->value = value;
             pos->right = newNode;
             break;
@@ -123,9 +123,8 @@ void bstReIterate(bstNode* n, bstNode** arr){
 
     bstReIterate(n->right, arr);
 }
-bstNode** iterable(bst* t){
-    bstNode** out;
-    out = calloc(t->len, sizeof *(t->root));
+bstNode** bstIterate(bst* t){
+    bstNode** out = (bstNode**)malloc(t->len * (sizeof *(t->root)));
     bstReIterate(t->root, out);
     return out;
 }
@@ -161,9 +160,9 @@ typedef struct omap{
 }omap;
 omap* omapInit( char* key, int value){
     omap* out;
-    out = malloc(sizeof *out);
+    out = (omap*)malloc(sizeof *out);
     omapNode* newNode;
-    newNode = malloc(sizeof *newNode);
+    newNode = (omapNode*)malloc(sizeof *newNode);
     newNode->key = key;
     newNode->ignore = false;
     newNode->value = value;
@@ -187,7 +186,7 @@ void omapSet(omap* o, char* key, int value){
                 continue;
             }
             omapNode* newNode;
-            newNode = malloc(sizeof *newNode);
+            newNode = (omapNode*)malloc(sizeof *newNode);
             newNode->key = key;
             newNode->value = value;
             pos->left = newNode;
@@ -198,7 +197,7 @@ void omapSet(omap* o, char* key, int value){
                 continue;
             }
             omapNode* newNode;
-            newNode = malloc(sizeof *newNode);
+            newNode = (omapNode*)malloc(sizeof *newNode);
             newNode->key = key;
             newNode->value = value;
             pos->right = newNode;
@@ -238,7 +237,34 @@ void omapDelete(omap* o, char* key){
         }
     }
 }
+void omapReIterate(omapNode* pos, omapNode** out){
+    if (pos == NULL){
+        return;
+    }
+    omapReIterate(pos->left, out);
 
+    out[len(out)] = pos;
+    printf("[%s:%d]", pos->key, pos->value);
+
+
+    omapReIterate(pos->right, out);
+}
+omapNode** omapIterable(omap* o){
+    omapNode** out;
+    out = (omapNode**)calloc(o->len, sizeof *(o->root));
+    omapReIterate(o->root, out);
+    printf("%p\n", out[0]);
+    return out;
+}
+void omapPrint(omap* o) {
+    omapNode** iter = omapIterable(o);
+    printf("%p\n", iter);
+	for (int i = 0; i < len(iter);i++) {
+        printf("%p\n", (iter[0]));
+		printf("[%s:%d]", (iter[i])->key, (*iter)[i].value);
+	}
+	printf("\n");
+}
 
 #endif //UNTITLED1_LIBRARY_H
 
